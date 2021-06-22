@@ -5,12 +5,13 @@ __pycache__/
 
 # C extensions
 *.so
-
+.idea/
 # Distribution / packaging
 .Python
 build/
 develop-eggs/
-dist/
+dist/json_log_decorator-*.whl
+json_log_decorator.egg-info
 downloads/
 eggs/
 .eggs/
