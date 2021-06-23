@@ -3,15 +3,24 @@ import logging
 import sys, os
 import __main__
 from pythonjsonlogger import jsonlogger
+import logging_loki
 
-def get_logger(name=None):
+def get_logger(name=None,loki_host=None):
     LOG_FORMAT = f"%(name)s - %(levelname)s - %(asctime)s  - %(message)s"
     if name:
         logger = logging.getLogger(name)
     else:
-        logger = logging.getLogger(os.path.basename(__main__.__file__).split('.')[0])
+        name = os.path.basename(__main__.__file__).split('.')[0]
+        logger = logging.getLogger(name)
     formatter = jsonlogger.JsonFormatter(LOG_FORMAT)
-    handler = logging.StreamHandler(stream=sys.stdout)
+    if loki_host:
+        handler = logging_loki.LokiHandler(
+            url=f"{loki_host}/loki/api/v1/push",
+            tags={"job": f"{name}"},
+            version="1",
+        )
+    else:
+        handler = logging.StreamHandler(stream=sys.stdout)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
